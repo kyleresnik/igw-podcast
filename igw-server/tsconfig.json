@@ -5,20 +5,17 @@
     "outDir": "./dist",
 
     // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "es2020",
-    "target": "es2020",
-    "types": [],
-    // For nodejs:
-    "lib": ["es2020"],
-    // "types": ["node"],
-    // and npm install -D @types/node
+    "module": "ES2022",
+    "target": "ES2022",
+    "types": ["node"],
+    "lib": ["ES2022"],
 
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
 
@@ -26,17 +23,8 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
 
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-
     // Recommended Options
     "strict": true,
-    "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
@@ -44,5 +32,8 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "ts-node": {
+    "esm": true
+  }
 }

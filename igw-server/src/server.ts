@@ -1,9 +1,13 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
-import rssRoutes from './routes/rss';
+import rssRoutes from './routes/rss.js';
+
+// load environment variables
+dotenv.config();
 
 // express server configuration and initialization
 class Server {
@@ -46,6 +50,7 @@ class Server {
       res.status(200).json({
         status: 'OK',
         timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
       });
     });
 
@@ -59,6 +64,22 @@ class Server {
         timestamp: new Date().toISOString(),
       });
     });
+
+    // global error handler
+    this.app.use(
+      (
+        err: Error,
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        console.error('Unhandled error: ', err);
+        res.status(500).json({
+          error: 'Internal server error',
+          timestamp: new Date().toISOString(),
+        });
+      }
+    );
   }
 
   // start the server
@@ -66,6 +87,8 @@ class Server {
     this.app.listen(this.port, () => {
       console.log(`Server running on port ${this.port}`);
       console.log(`RSS API available at http://localhost:${this.port}/api/rss`);
+      console.log(`Health check at http://localhost:${this.port}/health`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   }
 }

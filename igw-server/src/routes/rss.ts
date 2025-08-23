@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { parseRSSFeed } from '../utils/rssParser';
+import { parseRSSFeed } from '../utils/rssParser.js';
 
 const router = Router();
 
