@@ -1,5 +1,6 @@
 import React from 'react';
 import { Episode } from '../../types/podcast';
+import { DateUtils, TextUtils, MediaUtils } from '../../utils/helpers';
 
 interface EpisodeCardProps {
   episode: Episode;
@@ -7,20 +8,17 @@ interface EpisodeCardProps {
 
 // episode card component for grid layout
 const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
-  // TODO: add date and html formatting to utils! DRY this stuff
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+  const handlePlayClick = () => {
+    if (episode.audioUrl) {
+      window.open(episode.audioUrl, '_blank');
+    }
   };
 
-  // TODO: add date and html formatting to utils! DRY this stuff
-  const stripHtml = (html: string) => {
-    const tmp = document.createElement('DIV');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
+  const handleDownloadClick = () => {
+    if (episode.audioUrl) {
+      const filename = `${episode.title}.mp3`;
+      MediaUtils.downloadFile(episode.audioUrl, filename);
+    }
   };
 
   return (
@@ -45,22 +43,28 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
 
         <div className="card-meta">
           <time dateTime={episode.publishDate.toISOString()}>
-            {formatDate(episode.publishDate)}
+            {DateUtils.formatCardDate(episode.publishDate)}
           </time>
           {episode.duration && (
-            <span className="duration">🕐 {episode.duration}</span>
+            <span className="duration">
+              🕐 {TextUtils.formatDuration(episode.duration)}
+            </span>
+          )}
+          {episode.episodeNumber && (
+            <span className="episode-number">#{episode.episodeNumber}</span>
           )}
         </div>
 
         <p className="card-description">
-          {stripHtml(episode.description).substring(0, 100)}...
+          {TextUtils.cleanAndTruncate(episode.description, 100)}...
         </p>
 
         <div className="card-actions">
           <button
             className="play-button-small"
             aria-label={`Play ${episode.title}`}
-            onClick={() => window.open(episode.audioUrl, '_blank')}
+            onClick={handlePlayClick}
+            disabled={!episode.audioUrl}
           >
             ▶️ Play
           </button>

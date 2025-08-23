@@ -13,6 +13,9 @@ interface Episode {
   episodeNumber?: number;
   season?: number;
   imageUrl?: string;
+  explicit?: boolean;
+  keywords?: string[];
+  subtitle?: string;
 }
 
 // podcast metadata interface
@@ -24,6 +27,9 @@ interface PodcastInfo {
   categories: string[];
   language: string;
   lastBuildDate: Date;
+  explicit: boolean;
+  type: string;
+  email?: string;
 }
 
 // rss response structure
@@ -63,8 +69,8 @@ const fetchRSSContent = (url: string): Promise<string> => {
       reject(err);
     });
 
-    // Set timeout
-    request.setTimeout(10000, () => {
+    // set timeout
+    request.setTimeout(15000, () => {
       request.destroy();
       reject(new Error('Request timeout'));
     });
@@ -78,37 +84,52 @@ const fetchRSSContent = (url: string): Promise<string> => {
  */
 const extractText = (element: any): string => {
   if (!element) return '';
-  if (Array.isArray(element) && element.length > 0) {
-    const item = element[0];
-    if (typeof item === 'object' && item._) {
-      return String(item._).trim();
+
+  if (Array.isArray(element)) {
+    if (element.length > 0) {
+      const item = element[0];
+      // handle xml's CDATA sections
+      if (typeof item === 'string') {
+        return item.trim();
+      }
+      if (typeof item === 'object') {
+        if (item._) return String(item._).trim();
+        if (item.$t) return String(item.$t).trim();
+        return String(item).trim();
+      }
     }
-    return String(item).trim();
+    return '';
   }
+
+  if (typeof element === 'object') {
+    if (element._) return String(element._).trim();
+    if (element.$t) return String(element.$t).trim();
+  }
+
   return String(element).trim();
 };
 
 /**
- * safe extraction of url from xml element w/possible attributes
+ * safe extraction of attribute values from xml element
  * @param element - xml element
- * @returns extracted url or empty string
+ * @param attribute - attribute name
+ * @returns extracted attribute value or empty string
  */
-const extractUrl = (element: any): string => {
+const extractAttribute = (element: any, attribute: string): string => {
   if (!element) return '';
+
   if (Array.isArray(element) && element.length > 0) {
     const item = element[0];
-    if (typeof item === 'object' && item.$?.href) {
-      return item.$.href;
+    if (item.$ && item.$[attribute]) {
+      return String(item.$[attribute]).trim();
     }
-    if (typeof item === 'object' && item.$?.url) {
-      return item.$.url;
-    }
-    return String(item).trim();
   }
-  if (typeof element === 'object' && element.$?.url) {
-    return element.$.url;
+
+  if (element.$ && element.$[attribute]) {
+    return String(element.$[attribute]).trim();
   }
-  return String(element).trim();
+
+  return '';
 };
 
 /**
@@ -118,15 +139,18 @@ const extractUrl = (element: any): string => {
  */
 const extractAudioUrl = (enclosure: any): string => {
   if (!enclosure) return '';
+
   if (Array.isArray(enclosure) && enclosure.length > 0) {
     const item = enclosure[0];
     if (item.$ && item.$.url) {
       return item.$.url;
     }
   }
+
   if (enclosure.$ && enclosure.$.url) {
     return enclosure.$.url;
   }
+
   return '';
 };
 
@@ -204,12 +228,31 @@ const parseDuration = (duration: string): string => {
 };
 
 /**
- * strips HTML tags from string
+ * strips HTML tags from string and decodes HTML entities
  * @param html - HTML string
  * @returns plain text string
  */
 const stripHtml = (html: string): string => {
-  return html.replace(/<[^>]*>/g, '').trim();
+  return html
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&amp;/g, '&') // Decode HTML entities
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .trim();
+};
+
+/**
+ * parses boolean values from iTunes explicit field
+ * @param value - string value that might be 'true', 'false', 'yes', 'no'
+ * @returns boolean value
+ */
+const parseExplicit = (value: string): boolean => {
+  if (!value) return false;
+  const normalized = value.toLowerCase().trim();
+  return normalized === 'true' || normalized === 'yes';
 };
 
 /**
@@ -225,26 +268,37 @@ export const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
       explicitArray: true,
       ignoreAttrs: false,
       mergeAttrs: false,
+      explicitCharkey: false,
+      trim: true,
+      normalizeTags: false,
+      normalize: true,
     });
+
+    console.log('XML parsed successfully');
 
     const channel = parsedXml.rss?.channel?.[0];
     if (!channel) {
       throw new Error('Invalid RSS feed structure - no channel found');
     }
 
+    console.log('Channel found, extracting podcast metadata...');
+
     // extract podcast metadata
     const podcast: PodcastInfo = {
       title: extractText(channel.title),
-      description: stripHtml(extractText(channel.description)),
+      description: stripHtml(
+        extractText(channel.description) ||
+          extractText(channel['itunes:summary'])
+      ),
       imageUrl:
-        extractUrl(channel.image?.[0]?.url) ||
-        extractUrl(channel['itunes:image']),
+        extractAttribute(channel['itunes:image'], 'href') ||
+        extractText(channel.image?.[0]?.url),
       author:
         extractText(channel['itunes:author']) ||
         extractText(channel.managingEditor) ||
         'Unknown',
       categories: (channel['itunes:category'] || [])
-        .map((cat: any) => extractText(cat.$?.text || cat))
+        .map((cat: any) => extractAttribute(cat, 'text'))
         .filter(Boolean),
       language: extractText(channel.language) || 'en',
       lastBuildDate: new Date(
@@ -252,7 +306,14 @@ export const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
           extractText(channel.pubDate) ||
           Date.now()
       ),
+      explicit: parseExplicit(extractText(channel['itunes:explicit'])),
+      type: extractText(channel['itunes:type']) || 'episodic',
+      email: extractText(channel['itunes:owner']?.[0]?.[0]?.['itunes:email']),
     };
+
+    console.log(
+      `Podcast metadata extracted: ${podcast.title} by ${podcast.author}`
+    );
 
     // extract episodes
     const items = channel.item || [];
@@ -266,23 +327,57 @@ export const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
         console.warn(`Episode ${index} missing audio URL`);
       }
 
-      return {
+      // parse episode number with type handling
+      const episodeNumberText = extractText(item['itunes:episode']);
+      const seasonText = extractText(item['itunes:season']);
+      const keywordsText = extractText(item['itunes:keywords']);
+
+      const parsedEpisodeNumber = episodeNumberText
+        ? parseInt(episodeNumberText, 10)
+        : NaN;
+      const parsedSeason = seasonText ? parseInt(seasonText, 10) : NaN;
+
+      const episode: Episode = {
         id: guid || `episode-${index}`,
-        title: extractText(item.title),
+        title: extractText(item.title) || extractText(item['itunes:title']),
         description: stripHtml(
-          extractText(item.description) || extractText(item['itunes:summary'])
+          extractText(item['content:encoded']) ||
+            extractText(item.description) ||
+            extractText(item['itunes:summary']) ||
+            extractText(item['itunes:subtitle'])
         ),
         audioUrl,
         publishDate: new Date(extractText(item.pubDate) || Date.now()),
         duration: parseDuration(extractText(item['itunes:duration'])),
-        episodeNumber:
-          parseInt(extractText(item['itunes:episode']), 10) || undefined,
-        season: parseInt(extractText(item['itunes:season']), 10) || undefined,
-        imageUrl: extractUrl(item['itunes:image']) || podcast.imageUrl,
+        imageUrl:
+          extractAttribute(item['itunes:image'], 'href') || podcast.imageUrl,
+        explicit: parseExplicit(extractText(item['itunes:explicit'])),
+        subtitle: stripHtml(extractText(item['itunes:subtitle'])),
       };
+
+      // add optional properties only if they have valid values
+      if (!isNaN(parsedEpisodeNumber) && parsedEpisodeNumber > 0) {
+        episode.episodeNumber = parsedEpisodeNumber;
+      }
+
+      if (!isNaN(parsedSeason) && parsedSeason > 0) {
+        episode.season = parsedSeason;
+      }
+
+      if (keywordsText) {
+        const parsedKeywords = keywordsText
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean);
+        if (parsedKeywords.length > 0) {
+          episode.keywords = parsedKeywords;
+        }
+      }
+
+      return episode;
     });
 
-    const validEpisodes = episodes.filter((ep) => ep.audioUrl);
+    const validEpisodes = episodes.filter((ep) => ep.audioUrl && ep.title);
     console.log(`Parsed ${validEpisodes.length} valid episodes`);
 
     return {

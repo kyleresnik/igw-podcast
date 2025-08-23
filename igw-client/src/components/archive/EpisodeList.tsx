@@ -1,28 +1,24 @@
 import React from 'react';
 import { Episode } from '../../types/podcast';
+import { DateUtils, TextUtils, MediaUtils } from '../../utils/helpers';
 
 interface EpisodeListProps {
   episodes: Episode[];
 }
 
-/**
- * List view component for archive page
- */
+// list view component for episode archive page
 const EpisodeList: React.FC<EpisodeListProps> = ({ episodes }) => {
-  // TODO: add date and html formatting to utils! DRY this stuff
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+  const handlePlayClick = (episode: Episode) => {
+    if (episode.audioUrl) {
+      window.open(episode.audioUrl, '_blank');
+    }
   };
 
-  // TODO: add date and html formatting to utils! DRY this stuff
-  const stripHtml = (html: string) => {
-    const tmp = document.createElement('DIV');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
+  const handleDownloadClick = (episode: Episode) => {
+    if (episode.audioUrl) {
+      const filename = `${episode.title}.mp3`;
+      MediaUtils.downloadFile(episode.audioUrl, filename);
+    }
   };
 
   if (!episodes || episodes.length === 0) {
@@ -49,20 +45,25 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes }) => {
 
               <div className="list-item-meta">
                 <time dateTime={episode.publishDate.toISOString()}>
-                  {formatDate(episode.publishDate)}
+                  {DateUtils.formatListDate(episode.publishDate)}
                 </time>
                 {episode.duration && (
-                  <span className="duration">Duration: {episode.duration}</span>
+                  <span className="duration">
+                    Duration: {TextUtils.formatDuration(episode.duration)}
+                  </span>
                 )}
                 {episode.episodeNumber && (
                   <span className="episode-number">
                     Episode {episode.episodeNumber}
                   </span>
                 )}
+                {episode.season && (
+                  <span className="season-number">Season {episode.season}</span>
+                )}
               </div>
 
               <div className="list-item-description">
-                <p>{stripHtml(episode.description).substring(0, 150)}...</p>
+                <p>{TextUtils.cleanAndTruncate(episode.description, 200)}...</p>
               </div>
             </div>
 
@@ -70,19 +71,16 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes }) => {
               <button
                 className="play-button"
                 aria-label={`Play ${episode.title}`}
-                onClick={() => window.open(episode.audioUrl, '_blank')}
+                onClick={() => handlePlayClick(episode)}
+                disabled={!episode.audioUrl}
               >
                 ▶️ Play
               </button>
               <button
                 className="download-button"
                 aria-label={`Download ${episode.title}`}
-                onClick={() => {
-                  const link = document.createElement('a');
-                  link.href = episode.audioUrl;
-                  link.download = `${episode.title}.mp3`;
-                  link.click();
-                }}
+                onClick={() => handleDownloadClick(episode)}
+                disabled={!episode.audioUrl}
               >
                 ⬇️
               </button>

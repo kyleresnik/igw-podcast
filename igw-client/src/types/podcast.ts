@@ -5,21 +5,29 @@ export interface Episode {
   description: string;
   audioUrl: string;
   publishDate: Date;
-  duration: string;
+  duration?: string;
   episodeNumber?: number;
   season?: number;
   imageUrl?: string;
+  keywords?: string[];
+  explicit?: boolean;
+  episodeType?: string;
+  author?: string;
 }
 
 // represents podcast metadata
 export interface PodcastInfo {
   title: string;
   description: string;
-  imageUrl: string;
-  author: string;
-  categories: string[];
-  language: string;
-  lastBuildDate: Date;
+  imageUrl?: string;
+  author?: string;
+  categories?: string[];
+  language?: string;
+  lastBuildDate?: Date;
+  pubDate?: Date;
+  link?: string;
+  managingEditor?: string;
+  explicit?: boolean;
 }
 
 // rss feed response structure

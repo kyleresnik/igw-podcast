@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 // navigation header component + menu
-
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -24,7 +23,7 @@ const Header: React.FC = () => {
     <header className="header" role="banner">
       <div className="header-container">
         <Link to="/" className="logo" aria-label="Home">
-          <h1>Weird Tales Podcast</h1>
+          <h1>It Gets Weird</h1>
         </Link>
 
         <nav
@@ -63,7 +62,7 @@ const Header: React.FC = () => {
             ))}
             <li>
               <a
-                href="https://patreon.com/yourpodcast"
+                href="https://patreon.com/itgetsweird"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-link patreon-link"

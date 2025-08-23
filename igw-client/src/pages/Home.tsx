@@ -5,7 +5,7 @@ import FeaturedEpisode from '../components/home/FeaturedEpisode';
 import Loading from '../components/common/Loading';
 
 const Home: React.FC = () => {
-  // Load 5 most recent episodes
+  // load 5 most recent episodes
   const { episodes, podcast, loading, error } = useRSSFeed(5);
 
   if (loading) {
@@ -20,6 +20,12 @@ const Home: React.FC = () => {
           We're having trouble fetching the latest episodes. Please try again
           later.
         </p>
+        <details
+          style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}
+        >
+          <summary>Error Details</summary>
+          <p>{error}</p>
+        </details>
       </div>
     );
   }
@@ -30,12 +36,13 @@ const Home: React.FC = () => {
     <div className="home-page">
       <section className="hero-section" aria-labelledby="hero-title">
         <div className="hero-content">
-          <h1 id="hero-title">Welcome to Weird Tales</h1>
+          <h1 id="hero-title">Welcome to It Gets Weird</h1>
           <p className="hero-description">
-            Your gateway to the mysterious, unexplained, and downright bizarre.
-            Join us as we dive deep into conspiracies, cryptozoology, UFO
-            sightings, and paranormal phenomena that challenge everything we
-            think we know.
+            Longtime friends Nile and Kyle are the leading conspiracy,
+            cryptozoology, and paranormal experts in their fields. Well, at
+            least in their apartment. Join them and a revolving door of friends
+            every Sunday for a deep dive into the curious, the unexplained, and
+            the outright weird.
           </p>
         </div>
       </section>
@@ -66,7 +73,7 @@ const Home: React.FC = () => {
         </p>
         <div className="subscribe-links">
           <a
-            href="https://podcasts.apple.com/yourpodcast"
+            href="https://podcasts.apple.com/podcast/it-gets-weird/id1234567890"
             target="_blank"
             rel="noopener noreferrer"
             className="subscribe-button"
@@ -75,7 +82,7 @@ const Home: React.FC = () => {
             Apple Podcasts
           </a>
           <a
-            href="https://open.spotify.com/yourpodcast"
+            href="https://open.spotify.com/show/itgetsweird"
             target="_blank"
             rel="noopener noreferrer"
             className="subscribe-button"
@@ -83,7 +90,13 @@ const Home: React.FC = () => {
           >
             Spotify
           </a>
-          <a href="/rss" className="subscribe-button" aria-label="RSS Feed">
+          <a
+            href="https://feeds.libsyn.com/84842/rss"
+            className="subscribe-button"
+            aria-label="RSS Feed"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             RSS Feed
           </a>
         </div>
