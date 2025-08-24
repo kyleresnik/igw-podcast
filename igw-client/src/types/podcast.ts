@@ -13,6 +13,8 @@ export interface Episode {
   explicit?: boolean;
   episodeType?: string;
   author?: string;
+  subtitle?: string;
+  link?: string;
 }
 
 // represents podcast metadata
@@ -28,6 +30,8 @@ export interface PodcastInfo {
   link?: string;
   managingEditor?: string;
   explicit?: boolean;
+  summary?: string;
+  type?: string;
 }
 
 // rss feed response structure

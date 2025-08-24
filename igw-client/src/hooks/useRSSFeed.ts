@@ -1,11 +1,5 @@
-import { useState, useEffect } from 'react';
-import {
-  Episode,
-  PodcastInfo,
-  ApiResponse,
-  RSSResponse,
-} from '../types/podcast';
-import { RSSParser, RSSParsingError } from '../utils/rssParser';
+import { useState, useEffect, useCallback } from 'react';
+import { Episode, PodcastInfo, ApiResponse } from '../types/podcast';
 
 // rss feed hook return type
 interface UseRSSFeedReturn {
@@ -19,74 +13,125 @@ interface UseRSSFeedReturn {
 /**
  * custom hook for fetching and managing rss feed data
  * @param limit - optional limit for number of episodes to fetch
+ * @param offset - optional offset for pagination
  * @returns rss feed data and loading state
  */
-export const useRSSFeed = (limit?: number): UseRSSFeedReturn => {
+export const useRSSFeed = (
+  limit?: number,
+  offset?: number
+): UseRSSFeedReturn => {
   const [episodes, setEpisodes] = useState<Episode[] | null>(null);
   const [podcast, setPodcast] = useState<PodcastInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRSSData = async () => {
+  const fetchRSSData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const params = new URLSearchParams();
 
-      if (limit) {
-        params.append('limit', limit.toString());
-      }
+      // build episodes endpoint with query parameters
+      const episodesParams = new URLSearchParams();
+      if (limit) episodesParams.append('limit', limit.toString());
+      if (offset) episodesParams.append('offset', offset.toString());
 
-      const url = `${apiUrl}/api/rss${
-        params.toString() ? `?${params.toString()}` : ''
+      const episodesUrl = `${apiUrl}/api/rss/episodes${
+        episodesParams.toString() ? `?${episodesParams.toString()}` : ''
       }`;
+      const podcastInfoUrl = `${apiUrl}/api/rss/podcast-info`;
 
-      console.log('Fetching RSS data from:', url);
+      console.log('Fetching episodes from:', episodesUrl);
+      console.log('Fetching podcast info from:', podcastInfoUrl);
 
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      // fetch both endpoints concurrently
+      const [episodesResponse, podcastInfoResponse] = await Promise.all([
+        fetch(episodesUrl, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        }),
+        fetch(podcastInfoUrl, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        }),
+      ]);
 
-      if (!response.ok) {
+      // check if responses are ok
+      if (!episodesResponse.ok) {
         throw new Error(
-          `HTTP error! Status: ${response.status} - ${response.statusText}`
+          `Episodes API error! Status: ${episodesResponse.status} - ${episodesResponse.statusText}`
         );
       }
 
-      const data: ApiResponse<any> = await response.json();
-      console.log('Server response:', data);
-
-      if (data.success && data.data) {
-        // parse the rss data using our parser
-        const parsedData: RSSResponse = RSSParser.parseServerResponse(
-          data.data
+      if (!podcastInfoResponse.ok) {
+        throw new Error(
+          `Podcast info API error! Status: ${podcastInfoResponse.status} - ${podcastInfoResponse.statusText}`
         );
+      }
 
-        // apply limit if specified and not already applied by server
-        const finalEpisodes =
-          limit && parsedData.episodes.length > limit
-            ? parsedData.episodes.slice(0, limit)
-            : parsedData.episodes;
+      // parse json responses
+      const episodesData: ApiResponse<Episode[]> =
+        await episodesResponse.json();
+      const podcastInfoData: ApiResponse<PodcastInfo> =
+        await podcastInfoResponse.json();
 
-        setEpisodes(finalEpisodes);
-        setPodcast(parsedData.podcast);
+      console.log('Episodes response:', episodesData);
+      console.log('Podcast info response:', podcastInfoData);
+
+      // check if both requests were successful
+      if (!episodesData.success) {
+        throw new Error(
+          episodesData.error ||
+            'Failed to fetch episodes - server returned error'
+        );
+      }
+
+      if (!podcastInfoData.success) {
+        throw new Error(
+          podcastInfoData.error ||
+            'Failed to fetch podcast info - server returned error'
+        );
+      }
+
+      // process episodes data
+      if (episodesData.data && Array.isArray(episodesData.data)) {
+        const processedEpisodes: Episode[] = episodesData.data.map(
+          (episode: any) => ({
+            ...episode,
+            publishDate: new Date(episode.publishDate), // Ensure dates are Date objects
+          })
+        );
+        setEpisodes(processedEpisodes);
       } else {
         throw new Error(
-          data.error || 'Failed to fetch RSS data - invalid response format'
+          'Episodes data is not in expected format (should be array)'
         );
+      }
+
+      // set podcast info
+      if (podcastInfoData.data) {
+        const processedPodcast: PodcastInfo = {
+          ...podcastInfoData.data,
+          lastBuildDate: podcastInfoData.data.lastBuildDate
+            ? new Date(podcastInfoData.data.lastBuildDate)
+            : undefined,
+          pubDate: podcastInfoData.data.pubDate
+            ? new Date(podcastInfoData.data.pubDate)
+            : undefined,
+        };
+        setPodcast(processedPodcast);
       }
     } catch (err) {
       let errorMessage = 'An unknown error occurred while fetching RSS data';
 
-      if (err instanceof RSSParsingError) {
-        errorMessage = `RSS parsing error: ${err.message}`;
-      } else if (err instanceof TypeError && err.message.includes('fetch')) {
+      if (err instanceof TypeError && err.message.includes('fetch')) {
         errorMessage =
           'Network error: Unable to connect to the server. Make sure the server is running on localhost:5000';
       } else if (err instanceof Error) {
@@ -98,7 +143,7 @@ export const useRSSFeed = (limit?: number): UseRSSFeedReturn => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, offset]); // dependencies for useCallback
 
   const refetch = () => {
     fetchRSSData();
@@ -106,7 +151,7 @@ export const useRSSFeed = (limit?: number): UseRSSFeedReturn => {
 
   useEffect(() => {
     fetchRSSData();
-  }, [limit]);
+  }, [fetchRSSData]); // fetchRSSData is memoized and safe to include
 
   return {
     episodes,
