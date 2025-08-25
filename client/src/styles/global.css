@@ -121,13 +121,19 @@ img {
 
 /* Focus styles for accessibility */
 *:focus {
-  outline: 2px solid #4ecdc4;
+  outline: 2px solid #dc2626;
   outline-offset: 2px;
 }
 
-/* Disable focus outline for mouse users */
-.js-focus-visible :focus:not(.focus-visible) {
+/* Remove focus outline for mouse users but keep for keyboard users */
+*:focus:not(:focus-visible) {
   outline: none;
+}
+
+/* Ensure focus-visible works for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
 }
 
 /* High contrast mode support */
@@ -150,7 +156,7 @@ img {
   }
 }
 
-/* Dark mode media query (disabled - keeping site light) */
+/* Dark mode media query (disabled - using manual toggle instead) */
 /* 
 @media (prefers-color-scheme: dark) {
   body {
@@ -159,6 +165,203 @@ img {
   }
 }
 */
+
+/* DARK MODE STYLES */
+body.dark-mode {
+  background-color: #000;
+  color: #e0e0e0;
+}
+
+body.dark-mode .header {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+}
+
+body.dark-mode .footer {
+  background: #dc2626;
+}
+
+body.dark-mode .page-header h1 {
+  background: linear-gradient(45deg, #fff, #dc2626, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.dark-mode .hero-content h1 {
+  background: linear-gradient(45deg, #fff, #dc2626, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.dark-mode .hero-description {
+  color: #e0e0e0;
+}
+
+body.dark-mode .page-subtitle {
+  color: #b0b0b0;
+}
+
+body.dark-mode .featured-section h2,
+body.dark-mode .recent-episodes h2 {
+  color: #fff;
+}
+
+/* Dark mode for cards and content areas */
+body.dark-mode .featured-episode,
+body.dark-mode .episode-card,
+body.dark-mode .episode-list-item,
+body.dark-mode .topic-card,
+body.dark-mode .host-profile,
+body.dark-mode .contact-form,
+body.dark-mode .contact-method {
+  background: #1a1a1a;
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #e0e0e0;
+}
+
+body.dark-mode .topic-card:hover,
+body.dark-mode .episode-card:hover,
+body.dark-mode .episode-list-item:hover {
+  border-color: rgba(220, 38, 38, 0.6);
+}
+
+body.dark-mode .card-title,
+body.dark-mode .list-item-title,
+body.dark-mode .featured-info h3,
+body.dark-mode .topic-card h3,
+body.dark-mode .about-text h2,
+body.dark-mode .contact-form h2,
+body.dark-mode .contact-info h2 {
+  color: #fff;
+}
+
+body.dark-mode .card-description,
+body.dark-mode .list-item-description p,
+body.dark-mode .episode-description p,
+body.dark-mode .about-text p {
+  color: #b0b0b0;
+}
+
+body.dark-mode .card-meta,
+body.dark-mode .list-item-meta,
+body.dark-mode .episode-meta {
+  color: #888;
+}
+
+body.dark-mode .duration,
+body.dark-mode .episode-number,
+body.dark-mode .season-number {
+  background: #333;
+  color: #e0e0e0;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* Dark mode for forms */
+body.dark-mode .form-group label {
+  color: #fff;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+  background: #333;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+  border-color: #dc2626;
+  background: #2a2a2a;
+}
+
+/* Dark mode for error containers */
+body.dark-mode .error-container {
+  background: #2a0000;
+  border-color: #dc2626;
+  color: #e0e0e0;
+}
+
+body.dark-mode .error-container h2 {
+  color: #ff6b6b;
+}
+
+/* Dark mode for loading component */
+body.dark-mode .loading-message {
+  color: #b0b0b0;
+}
+
+/* Dark mode for special sections */
+body.dark-mode .hero-section {
+  background: linear-gradient(
+    135deg,
+    rgba(220, 38, 38, 0.1),
+    rgba(0, 0, 0, 0.2)
+  );
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+body.dark-mode .coming-soon,
+body.dark-mode .coming-soon-notice {
+  background: linear-gradient(
+    135deg,
+    rgba(220, 38, 38, 0.1),
+    rgba(0, 0, 0, 0.2)
+  );
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #e0e0e0;
+}
+
+body.dark-mode .coming-soon h2,
+body.dark-mode .coming-soon-notice h2 {
+  color: #fff;
+}
+
+body.dark-mode .story-guidelines {
+  background: #1a1a1a;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+body.dark-mode .story-guidelines h3 {
+  color: #fff;
+}
+
+body.dark-mode .story-guidelines li {
+  color: #b0b0b0;
+}
+
+/* Dark mode for no-episodes state */
+body.dark-mode .no-episodes {
+  color: #888;
+}
+
+body.dark-mode .no-episodes h3 {
+  color: #fff;
+}
+
+/* Dark mode adjustments for social links */
+body.dark-mode .social-links a:hover {
+  color: #fff;
+}
+
+body.dark-mode .custom-requests a {
+  color: #ff6b6b;
+}
+
+body.dark-mode .custom-requests a:hover {
+  color: #fff;
+}
+
+/* Dark mode for contact method links */
+body.dark-mode .contact-method a {
+  color: #fff;
+}
+
+body.dark-mode .contact-method a:hover {
+  color: #ff6b6b;
+}
 
 /* Layout */
 .layout {
@@ -203,11 +406,29 @@ img {
   background-clip: text;
 }
 
+.logo {
+  text-decoration: none;
+  display: block;
+  outline: none; /* Remove default outline */
+}
+
 .logo:hover h1 {
   -webkit-transform: scale(1.05);
   -moz-transform: scale(1.05);
   transform: scale(1.05);
   transition: transform 0.2s ease;
+}
+
+/* Custom focus style for logo that's less intrusive */
+.logo:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Remove focus outline on mouse click */
+.logo:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Navigation */
@@ -273,6 +494,7 @@ img {
   border-radius: 6px;
   transition: all 0.3s ease;
   position: relative;
+  outline: none; /* Remove default outline */
 }
 
 .nav-link:hover {
@@ -280,6 +502,15 @@ img {
   -webkit-transform: translateY(-2px);
   -moz-transform: translateY(-2px);
   transform: translateY(-2px);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.nav-link:focus:not(:focus-visible) {
+  outline: none;
 }
 
 .nav-link.active {
@@ -1330,6 +1561,12 @@ img {
     display: flex;
   }
 
+  .dark-mode-toggle {
+    margin-left: 0.5rem;
+    width: 40px;
+    height: 40px;
+  }
+
   .nav-menu {
     position: absolute;
     top: 100%;
@@ -1347,6 +1584,11 @@ img {
     transition: all 0.3s ease;
     /* Reset margin for mobile */
     margin: 0;
+  }
+
+  /* Dark mode mobile menu */
+  body.dark-mode .nav-menu {
+    background: #dc2626;
   }
 
   .nav-menu.active {
@@ -1490,14 +1732,39 @@ img {
   }
 }
 
-/* Focus styles for accessibility */
+/* Focus styles for accessibility with better mouse/keyboard distinction */
 button:focus,
 input:focus,
 select:focus,
-textarea:focus,
-a:focus {
+textarea:focus {
   outline: 2px solid #dc2626;
   outline-offset: 2px;
+}
+
+/* Remove focus outline on mouse click for buttons and form elements */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Ensure keyboard focus is visible */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+/* Special handling for links */
+a:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+a:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* High contrast mode support */

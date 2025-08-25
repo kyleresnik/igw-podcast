@@ -26,33 +26,78 @@ const About: React.FC = () => {
           <h2>What We Cover</h2>
           <div className="topics-grid">
             <div className="topic-card">
-              <h3>🛸 UFOs & Aliens</h3>
-              <p>
-                Extraterrestrial encounters, alien mythologies, and government
-                cover-ups
-              </p>
+              <a
+                href="https://en.wikipedia.org/wiki/Ufology"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Wikipedia entry for ufology (opens in new tab)"
+              >
+                <h3>🛸 UFOs & Aliens</h3>
+                <p>
+                  Extraterrestrial encounters, alien mythologies, and government
+                  cover-ups
+                </p>
+              </a>
             </div>
             <div className="topic-card">
-              <h3>🦄 Cryptozoology</h3>
-              <p>Legendary creatures, unidentified beasts, and weird biology</p>
+              <a
+                href="https://en.wikipedia.org/wiki/Cryptozoology"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Wikipedia entry for cryptozoology (opens in new tab)"
+              >
+                <h3>🦄 Cryptozoology</h3>
+                <p>
+                  Legendary creatures, unidentified beasts, and weird biology
+                </p>
+              </a>
             </div>
             <div className="topic-card">
-              <h3>👻 Paranormal</h3>
-              <p>
-                Supernatural phenomena, haunted locations, and psychic abilities
-              </p>
+              <a
+                href="https://en.wikipedia.org/wiki/Paranormal"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Wikipedia entry for paranormal (opens in new tab)"
+              >
+                <h3>👻 Paranormal</h3>
+                <p>
+                  Supernatural phenomena, haunted locations, and psychic
+                  abilities
+                </p>
+              </a>
             </div>
             <div className="topic-card">
-              <h3>🕵️ Conspiracies</h3>
-              <p>Parapolitics, cover-ups, espionage, and secret societies</p>
+              <a
+                href="https://en.wikipedia.org/wiki/Conspiracy_theory"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Wikipedia entry for conspiracy theory (opens in new tab)"
+              >
+                <h3>🕵️ Conspiracies</h3>
+                <p>Parapolitics, cover-ups, espionage, and secret societies</p>
+              </a>
             </div>
             <div className="topic-card">
-              <h3>🔍 Cults & Religious Movements</h3>
-              <p>Unusual religious groups, cults, and strange spirituality</p>
+              <a
+                href="https://en.wikipedia.org/wiki/New_religious_movement"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Wikipedia entry for new religious movement (opens in new tab)"
+              >
+                <h3>🔍 Cults & Religious Movements</h3>
+                <p>Unusual religious groups, cults, and strange spirituality</p>
+              </a>
             </div>
             <div className="topic-card">
-              <h3>🌟 New Age Phenomena</h3>
-              <p>Modern spiritual and metaphysical beliefs</p>
+              <a
+                href="https://en.wikipedia.org/wiki/New_Age"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Wikipedia entry for New Age (opens in new tab)"
+              >
+                <h3>🌟 New Age Phenomena</h3>
+                <p>Modern spiritual and metaphysical beliefs</p>
+              </a>
             </div>
           </div>
 
