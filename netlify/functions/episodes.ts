@@ -1,7 +1,15 @@
 import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-const { parseRSSFeed } = require('./utils/rssParser');
 
-export const handler: Handler = async (
+// import the rss parser function
+let parseRSSFeed: any;
+try {
+  const rssParserModule = require('./utils/rssParser');
+  parseRSSFeed = rssParserModule.parseRSSFeed;
+} catch (error) {
+  console.error('Failed to import RSS parser:', error);
+}
+
+const handler: Handler = async (
   event: HandlerEvent,
   context: HandlerContext
 ) => {
@@ -72,6 +80,19 @@ export const handler: Handler = async (
       };
     }
 
+    if (!parseRSSFeed) {
+      console.error('[Episodes] RSS parser not available');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: 'RSS parser not available',
+          timestamp: new Date().toISOString(),
+        }),
+      };
+    }
+
     // parse rss feed
     console.log(`[Episodes] Parsing RSS feed: ${rssUrl}`);
     const feedData = await parseRSSFeed(rssUrl);
@@ -124,3 +145,6 @@ export const handler: Handler = async (
     };
   }
 };
+
+// Export for Netlify Functions
+exports.handler = handler;

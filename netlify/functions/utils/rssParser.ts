@@ -230,12 +230,8 @@ const parseExplicit = (value: string): boolean => {
   return normalized === 'true' || normalized === 'yes';
 };
 
-/**
- * main rss parsing function for netlify Functions
- * @param rssUrl - url of the rss feed
- * @returns promise resolving to parsed rss data
- */
-export const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
+// CommonJS export for compatibility with Netlify Functions
+const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
   try {
     console.log(`[RSS Parser] Fetching feed from: ${rssUrl}`);
     const startTime = Date.now();
