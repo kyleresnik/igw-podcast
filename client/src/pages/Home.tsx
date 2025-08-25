@@ -5,8 +5,8 @@ import FeaturedEpisode from '../components/home/FeaturedEpisode';
 import Loading from '../components/common/Loading';
 
 const Home: React.FC = () => {
-  // loads seven most recent episodes - latest episode is featured
-  const { episodes, loading, error } = useRSSFeed(7);
+  // loads five most recent episodes - latest episode is featured
+  const { episodes, loading, error } = useRSSFeed(5);
 
   if (loading) {
     return <Loading message="Loading latest episodes..." />;
