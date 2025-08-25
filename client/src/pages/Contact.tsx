@@ -69,8 +69,8 @@ const Contact: React.FC = () => {
             <div className="contact-method">
               <h3>Email</h3>
               <p>
-                <a href="mailto:contact@weirdtalespodcast.com">
-                  contact@weirdtalespodcast.com
+                <a href="mailto:itgetsweirdpodcast@gmail.com">
+                  itgetsweirdpodcast@gmail.com
                 </a>
               </p>
             </div>
