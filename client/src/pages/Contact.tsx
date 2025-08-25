@@ -77,7 +77,10 @@ const Contact: React.FC = () => {
 
             <div className="contact-method">
               <h3>Social Media</h3>
-              <p>Find us on Twitter and Instagram @WeirdTalesPod</p>
+              <p>
+                Find us on Twitter @IGWPodcast and Bluesky
+                @itgetsweird.bsky.social
+              </p>
             </div>
           </div>
 

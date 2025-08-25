@@ -1437,11 +1437,13 @@ img {
   .hosts-section {
     grid-template-columns: 1fr;
     margin: 2rem 0; /* Reset margin for mobile */
+    justify-items: stretch; /* Full width on mobile */
   }
 
   .topics-grid > *,
   .hosts-section > * {
     margin: 1rem 0; /* Vertical margin for mobile */
+    max-width: none; /* Remove max-width on mobile */
   }
 }
 
