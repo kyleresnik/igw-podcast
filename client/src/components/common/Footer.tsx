@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {currentYear} It Gets Weird. All rights reserved.</p>
+          <p>{currentYear} - It Gets Weird.</p>
         </div>
       </div>
     </footer>
