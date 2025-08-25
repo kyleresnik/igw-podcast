@@ -1,6 +1,6 @@
 import React from 'react';
 import { Episode } from '../../types/podcast';
-import { DateUtils, TextUtils, MediaUtils } from '../../utils/helpers';
+import { DateUtils, TextUtils } from '../../utils/helpers';
 
 interface EpisodeListProps {
   episodes: Episode[];
@@ -14,12 +14,12 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes }) => {
     }
   };
 
-  const handleDownloadClick = (episode: Episode) => {
-    if (episode.audioUrl) {
-      const filename = `${episode.title}.mp3`;
-      MediaUtils.downloadFile(episode.audioUrl, filename);
-    }
-  };
+  // const handleDownloadClick = (episode: Episode) => {
+  //   if (episode.audioUrl) {
+  //     const filename = `${episode.title}.mp3`;
+  //     MediaUtils.downloadFile(episode.audioUrl, filename);
+  //   }
+  // };
 
   if (!episodes || episodes.length === 0) {
     return (
