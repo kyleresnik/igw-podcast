@@ -1,5 +1,5 @@
 [build]
-  base = "client"
+  base = "."
   command = "npm run build"
   publish = "client/build"
   functions = "netlify/functions"
@@ -7,13 +7,18 @@
 [build.environment]
   REACT_APP_API_URL = "/.netlify/functions"
   NODE_VERSION = "18"
+  RSS_FEED_URL = "https://feeds.libsyn.com/84842/rss"
 
 [dev]
-  command = "npm start"
+  command = "npm run dev:client"
   port = 3000
   publish = "client/build"
   functions = "netlify/functions"
   framework = "create-react-app"
+
+[dev.environment]
+  REACT_APP_API_URL = "/.netlify/functions"
+  RSS_FEED_URL = "https://feeds.libsyn.com/84842/rss"
 
 # Redirect API calls to functions
 [[redirects]]
@@ -22,7 +27,7 @@
   status = 200
 
 [[redirects]]
-  from = "/api/rss/podcast-info"
+  from = "/api/rss/podcast-info"  
   to = "/.netlify/functions/podcast-info"
   status = 200
 
@@ -36,7 +41,16 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Security headers
+# Cache settings for functions
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, s-maxage=600"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Accept"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+
+# Security headers for static files
 [[headers]]
   for = "/*"
   [headers.values]
@@ -46,9 +60,8 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     X-XSS-Protection = "1; mode=block"
 
+# Cache static assets
 [[headers]]
-  for = "/.netlify/functions/*"
+  for = "/static/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "Content-Type, Accept"
-    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Cache-Control = "public, max-age=31536000, immutable"

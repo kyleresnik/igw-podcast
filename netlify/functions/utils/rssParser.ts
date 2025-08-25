@@ -1,6 +1,6 @@
-import https from 'https';
-import http from 'http';
-import { parseStringPromise } from 'xml2js';
+import * as https from 'https';
+import * as http from 'http';
+const xml2js = require('xml2js');
 
 // episode interface
 interface Episode {
@@ -244,7 +244,7 @@ export const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
     console.log(`[RSS Parser] XML fetched in ${Date.now() - startTime}ms`);
 
     const parseStartTime = Date.now();
-    const parsedXml = await parseStringPromise(xmlContent, {
+    const parsedXml = await xml2js.parseStringPromise(xmlContent, {
       explicitArray: true,
       ignoreAttrs: false,
       mergeAttrs: false,
@@ -374,3 +374,5 @@ export const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
     );
   }
 };
+
+module.exports = { parseRSSFeed };

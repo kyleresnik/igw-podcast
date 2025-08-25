@@ -1,5 +1,5 @@
 import { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
-import { parseRSSFeed } from './utils/rssParser';
+const { parseRSSFeed } = require('./utils/rssParser');
 
 export const handler: Handler = async (
   event: HandlerEvent,

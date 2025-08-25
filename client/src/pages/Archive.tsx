@@ -11,7 +11,7 @@ const Archive: React.FC = () => {
   // calculate offset for current page
   const offset = (currentPage - 1) * episodesPerPage;
 
-  const { episodes, podcast, loading, error, refetch } = useRSSFeed(
+  const { episodes, loading, error, refetch } = useRSSFeed(
     episodesPerPage,
     offset
   );
