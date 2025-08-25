@@ -31,7 +31,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes }) => {
 
   return (
     <div className="episode-list">
-      {episodes.map((episode) => (
+      {episodes.map(episode => (
         <article
           key={episode.id}
           className="episode-list-item"
@@ -75,14 +75,6 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes }) => {
                 disabled={!episode.audioUrl}
               >
                 ▶️ Play
-              </button>
-              <button
-                className="download-button"
-                aria-label={`Download ${episode.title}`}
-                onClick={() => handleDownloadClick(episode)}
-                disabled={!episode.audioUrl}
-              >
-                ⬇️
               </button>
             </div>
           </div>

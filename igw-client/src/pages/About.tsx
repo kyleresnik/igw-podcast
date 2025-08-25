@@ -13,13 +13,14 @@ const About: React.FC = () => {
 
       <section className="about-content">
         <div className="about-text">
-          <h2>Our Mission</h2>
+          <h2>About It Gets Weird</h2>
           <p>
-            Welcome to It Gets Weird, where we explore the strange, mysterious,
-            and unexplained corners of our world. From ancient conspiracies to
-            modern UFO sightings, from cryptid encounters to paranormal
-            investigations, we leave no stone unturned in our quest for the
-            truth.
+            Welcome to It Gets Weird, our comedy show where we explore the
+            unusual, the unbelievable, and the unexplained to try and make your
+            world a little weirder. We're Nile and Kyle and we've been
+            discussing the world of weird for almost a decade. We both get
+            stoked about this strange stories, most of which are - let's be
+            honest - also pretty funny. And so we started a podcast about it.
           </p>
 
           <h2>What We Cover</h2>
@@ -27,28 +28,31 @@ const About: React.FC = () => {
             <div className="topic-card">
               <h3>🛸 UFOs & Aliens</h3>
               <p>
-                Exploring extraterrestrial encounters and government cover-ups
+                Extraterrestrial encounters, alien mythologies, and government
+                cover-ups
               </p>
             </div>
             <div className="topic-card">
               <h3>🦄 Cryptozoology</h3>
-              <p>Investigating legendary creatures and mysterious beasts</p>
+              <p>Legendary creatures, unidentified beasts, and weird biology</p>
             </div>
             <div className="topic-card">
               <h3>👻 Paranormal</h3>
-              <p>Delving into ghost stories and supernatural phenomena</p>
+              <p>
+                Supernatural phenomena, haunted locations, and psychic abilities
+              </p>
             </div>
             <div className="topic-card">
               <h3>🕵️ Conspiracies</h3>
-              <p>Uncovering hidden truths and secret societies</p>
+              <p>Parapolitics, cover-ups, espionage, and secret societies</p>
             </div>
             <div className="topic-card">
               <h3>🔍 Cults & Religious Movements</h3>
-              <p>Examining unusual religious groups and their beliefs</p>
+              <p>Unusual religious groups, cults, and strange spirituality</p>
             </div>
             <div className="topic-card">
               <h3>🌟 New Age Phenomena</h3>
-              <p>Investigating modern spiritual and metaphysical claims</p>
+              <p>Modern spiritual and metaphysical beliefs</p>
             </div>
           </div>
 
@@ -57,31 +61,37 @@ const About: React.FC = () => {
             <div className="host-profile">
               <h3>Nile</h3>
               <p>
-                One half of the dynamic duo bringing you the weirdest tales from
-                around the world. Nile brings a keen eye for detail and a
-                passion for getting to the bottom of every mystery, no matter
-                how strange it might seem.
+                Co-host Nile hails from the same Indiana town as Kyle. A
+                consummate professional who also loves wrestling, comics,
+                movies, music, and Godzilla in general. Especially interested in
+                topics like Deep Underground Military Bases (DUMBs),
+                supersoldiers, and the paranormal.
               </p>
             </div>
             <div className="host-profile">
               <h3>Kyle</h3>
               <p>
-                The other half of our investigating team, Kyle adds his own
-                unique perspective to every story. Together with Nile, he
-                explores the unexplained with both skepticism and wonder, always
-                ready for whatever weirdness comes their way.
+                Co-host Kyle also grew up in small-town Indiana, one of those
+                places where the weird festers just below the surface. A big fan
+                of anime, manga, games, coding, and movies. Especially
+                interested in topics like parapolitics, ufology, and high
+                strangeness.
               </p>
             </div>
           </div>
 
           <h2>Join Our Community</h2>
           <p>
-            Have a weird tale of your own? We'd love to hear from you! Send us
+            Have a weird story of your own? We'd love to hear from you! Send us
             your stories, tips, and suggestions at{' '}
             <a href="mailto:itgetsweirdpodcast@gmail.com">
               itgetsweirdpodcast@gmail.com
             </a>
-            . Who knows? Your experience might be featured in our next episode.
+            . Who knows? Your experience might be featured in our next episode!
+            We also highly suggest clicking the Patreon link at the top of our
+            page. Joining Patreon not only gets you a huge back catalog of bonus
+            content, but also gets you into the exclusive It Gets Weird Discord
+            server.
           </p>
 
           <h2>Every Sunday</h2>

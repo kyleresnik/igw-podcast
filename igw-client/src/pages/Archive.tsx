@@ -34,18 +34,7 @@ const Archive: React.FC = () => {
           <summary>Error Details</summary>
           <p>{error}</p>
         </details>
-        <button
-          onClick={refetch}
-          style={{
-            marginTop: '1rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: '#4ecdc4',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
+        <button onClick={refetch} className="submit-button">
           Try Again
         </button>
       </div>
@@ -54,9 +43,7 @@ const Archive: React.FC = () => {
 
   const currentEpisodes = episodes || [];
 
-  // TODO: figure out how to paginate better
-  // for proper pagination, you'd need the total count from your server
-  // for now, we'll show pagination controls and let the server handle the limits
+  // check if we have episodes and if there might be more pages
   const hasNextPage = currentEpisodes.length === episodesPerPage;
   const hasPrevPage = currentPage > 1;
 
@@ -70,8 +57,7 @@ const Archive: React.FC = () => {
       <div className="page-header">
         <h1>Episode Archive</h1>
         <p className="page-subtitle">
-          Browse through all episodes of It Gets Weird
-          {podcast?.title && ` - ${podcast.title}`}
+          Browse the It Gets Weird episode archive
         </p>
       </div>
 
@@ -114,6 +100,9 @@ const Archive: React.FC = () => {
           <div className="no-episodes">
             <h3>No episodes found</h3>
             <p>There are no episodes to display at this time.</p>
+            <button onClick={refetch} className="submit-button">
+              Refresh
+            </button>
           </div>
         )}
       </div>

@@ -34,8 +34,9 @@ export const useRSSFeed = (
 
       // build episodes endpoint with query parameters
       const episodesParams = new URLSearchParams();
-      if (limit) episodesParams.append('limit', limit.toString());
-      if (offset) episodesParams.append('offset', offset.toString());
+      if (limit !== undefined) episodesParams.append('limit', limit.toString());
+      if (offset !== undefined)
+        episodesParams.append('offset', offset.toString());
 
       const episodesUrl = `${apiUrl}/api/rss/episodes${
         episodesParams.toString() ? `?${episodesParams.toString()}` : ''

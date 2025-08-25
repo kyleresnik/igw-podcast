@@ -29,7 +29,7 @@ router.get(
   '/episodes',
   async (req: Request<{}, {}, {}, RSSQuery>, res: Response) => {
     try {
-      console.log('📡 Fetching episodes with query:', req.query);
+      console.log('Fetching episodes with query:', req.query);
 
       const limit = Math.min(parseInt(req.query.limit || '10', 10), 100); // max 100
       const offset = Math.max(parseInt(req.query.offset || '0', 10), 0); // min 0
@@ -51,21 +51,16 @@ router.get(
       // episodes pagination
       const paginatedEpisodes = feedData.episodes.slice(offset, offset + limit);
 
-      console.log(
-        `✅ Successfully fetched ${paginatedEpisodes.length} episodes`
-      );
+      console.log(`Successfully fetched ${paginatedEpisodes.length} episodes`);
 
       return res.json({
         success: true,
-        data: {
-          podcast: feedData.podcast,
-          episodes: paginatedEpisodes,
-          pagination: {
-            total: feedData.episodes.length,
-            limit,
-            offset,
-            hasMore: offset + limit < feedData.episodes.length,
-          },
+        data: paginatedEpisodes,
+        pagination: {
+          total: feedData.episodes.length,
+          limit,
+          offset,
+          hasMore: offset + limit < feedData.episodes.length,
         },
         timestamp: new Date().toISOString(),
       });
@@ -89,7 +84,7 @@ router.get(
 // get podcast metadata information
 router.get('/podcast-info', async (req: Request, res: Response) => {
   try {
-    console.log('📡 Fetching podcast info');
+    console.log('Fetching podcast info');
 
     const rssUrl = process.env.RSS_FEED_URL;
 
@@ -102,12 +97,10 @@ router.get('/podcast-info', async (req: Request, res: Response) => {
       });
     }
 
-    console.log(`🔄 Parsing RSS feed for podcast info: ${rssUrl}`);
+    console.log(`Parsing RSS feed for podcast info: ${rssUrl}`);
     const feedData = await parseRSSFeed(rssUrl);
 
-    console.log(
-      `✅ Successfully fetched podcast info: ${feedData.podcast.title}`
-    );
+    console.log(`Successfully fetched podcast info: ${feedData.podcast.title}`);
 
     return res.json({
       success: true,

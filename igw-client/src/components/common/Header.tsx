@@ -47,7 +47,7 @@ const Header: React.FC = () => {
             id="navigation-menu"
             className={`nav-menu ${isMenuOpen ? 'active' : ''}`}
           >
-            {navigationItems.map((item) => (
+            {navigationItems.map(item => (
               <li key={item.path}>
                 <Link
                   to={item.path}
@@ -62,10 +62,21 @@ const Header: React.FC = () => {
             ))}
             <li>
               <a
+                href="https://www.twitch.tv/itgetsweird"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-link outgoing-link"
+                aria-label="Follow us on Twitch.tv (opens in new tab)"
+              >
+                Twitch
+              </a>
+            </li>
+            <li>
+              <a
                 href="https://patreon.com/itgetsweird"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="nav-link patreon-link"
+                className="nav-link outgoing-link"
                 aria-label="Support us on Patreon (opens in new tab)"
               >
                 Patreon

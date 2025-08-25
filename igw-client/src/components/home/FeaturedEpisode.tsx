@@ -10,7 +10,7 @@ interface FeaturedEpisodeProps {
 const FeaturedEpisode: React.FC<FeaturedEpisodeProps> = ({ episode }) => {
   const handlePlayClick = () => {
     if (episode.audioUrl) {
-      // TODO: Implement audio player
+      // TODO: implement audio player
       window.open(episode.audioUrl, '_blank');
     }
   };
@@ -67,14 +67,6 @@ const FeaturedEpisode: React.FC<FeaturedEpisodeProps> = ({ episode }) => {
               disabled={!episode.audioUrl}
             >
               ▶️ Play Episode
-            </button>
-            <button
-              className="download-button"
-              aria-label={`Download ${episode.title}`}
-              onClick={handleDownloadClick}
-              disabled={!episode.audioUrl}
-            >
-              ⬇️ Download
             </button>
           </div>
         </div>

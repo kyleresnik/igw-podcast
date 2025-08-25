@@ -5,8 +5,8 @@ import FeaturedEpisode from '../components/home/FeaturedEpisode';
 import Loading from '../components/common/Loading';
 
 const Home: React.FC = () => {
-  // load 5 most recent episodes
-  const { episodes, podcast, loading, error } = useRSSFeed(5);
+  // loads seven most recent episodes - latest episode is featured
+  const { episodes, podcast, loading, error } = useRSSFeed(7);
 
   if (loading) {
     return <Loading message="Loading latest episodes..." />;
@@ -58,7 +58,7 @@ const Home: React.FC = () => {
         <section className="recent-episodes" aria-labelledby="recent-title">
           <h2 id="recent-title">Recent Episodes</h2>
           <div className="episodes-grid">
-            {otherEpisodes.map((episode) => (
+            {otherEpisodes.map(episode => (
               <EpisodeCard key={episode.id} episode={episode} />
             ))}
           </div>
@@ -73,7 +73,7 @@ const Home: React.FC = () => {
         </p>
         <div className="subscribe-links">
           <a
-            href="https://podcasts.apple.com/podcast/it-gets-weird/id1234567890"
+            href="https://podcasts.apple.com/us/podcast/it-gets-weird/id1137482698"
             target="_blank"
             rel="noopener noreferrer"
             className="subscribe-button"
@@ -82,7 +82,7 @@ const Home: React.FC = () => {
             Apple Podcasts
           </a>
           <a
-            href="https://open.spotify.com/show/itgetsweird"
+            href="https://open.spotify.com/show/2gj1sy56nwNzuTWPafgqmd"
             target="_blank"
             rel="noopener noreferrer"
             className="subscribe-button"

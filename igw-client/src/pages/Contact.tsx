@@ -27,7 +27,7 @@ const Contact: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
@@ -39,9 +39,9 @@ const Contact: React.FC = () => {
     setSubmitStatus(null);
 
     try {
-      // TODO: Implement actual form submission
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // Simulate API call
+      // TODO: implement actual form submission
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      // simulate api call
       setSubmitStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
@@ -52,7 +52,6 @@ const Contact: React.FC = () => {
   };
 
   // TODO: sanitize inputs - form is not functional until then
-
   return (
     <div className="contact-page">
       <div className="page-header">
@@ -68,7 +67,7 @@ const Contact: React.FC = () => {
           <h2>Get In Touch</h2>
           <div className="contact-methods">
             <div className="contact-method">
-              <h3>📧 Email</h3>
+              <h3>Email</h3>
               <p>
                 <a href="mailto:contact@weirdtalespodcast.com">
                   contact@weirdtalespodcast.com
@@ -77,13 +76,8 @@ const Contact: React.FC = () => {
             </div>
 
             <div className="contact-method">
-              <h3>🐦 Social Media</h3>
+              <h3>Social Media</h3>
               <p>Find us on Twitter and Instagram @WeirdTalesPod</p>
-            </div>
-
-            <div className="contact-method">
-              <h3>📞 Voicemail</h3>
-              <p>Leave us a voicemail with your story: (555) 123-WEIRD</p>
             </div>
           </div>
 
