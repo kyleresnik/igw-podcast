@@ -19,7 +19,7 @@ const handler: Handler = async (
     'Access-Control-Allow-Headers': 'Content-Type, Accept',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Content-Type': 'application/json',
-    'Cache-Control': 'public, max-age=300', // 5 minute cache
+    'Cache-Control': 'public, max-age=600', // 10 minute cache for podcast info
   };
 
   // handle preflight cors requests
@@ -47,19 +47,7 @@ const handler: Handler = async (
   try {
     // log request
     console.log(
-      `[Episodes] ${event.httpMethod} ${event.path} - ${event.headers['user-agent']}`
-    );
-    console.log('[Episodes] Query params:', event.queryStringParameters);
-
-    // extract query parameters (same as express req.query)
-    const { limit = '10', offset = '0' } = event.queryStringParameters || {};
-
-    // validate and sanitize parameters
-    const limitNum = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 100);
-    const offsetNum = Math.max(parseInt(offset, 10) || 0, 0);
-
-    console.log(
-      `[Episodes] Requesting ${limitNum} episodes starting from ${offsetNum}`
+      `[Podcast Info] ${event.httpMethod} ${event.path} - ${event.headers['user-agent']}`
     );
 
     // get rss url from environment
@@ -67,7 +55,7 @@ const handler: Handler = async (
 
     if (!rssUrl) {
       console.error(
-        '[Episodes] RSS_FEED_URL environment variable not configured'
+        '[Podcast Info] RSS_FEED_URL environment variable not configured'
       );
       return {
         statusCode: 500,
@@ -81,7 +69,7 @@ const handler: Handler = async (
     }
 
     if (!parseRSSFeed) {
-      console.error('[Episodes] RSS parser not available');
+      console.error('[Podcast Info] RSS parser not available');
       return {
         statusCode: 500,
         headers,
@@ -93,18 +81,12 @@ const handler: Handler = async (
       };
     }
 
-    // parse rss feed
-    console.log(`[Episodes] Parsing RSS feed: ${rssUrl}`);
+    // parse rss feed for podcast metadata
+    console.log(`[Podcast Info] Parsing RSS feed for metadata: ${rssUrl}`);
     const feedData = await parseRSSFeed(rssUrl);
 
-    // apply pagination
-    const paginatedEpisodes = feedData.episodes.slice(
-      offsetNum,
-      offsetNum + limitNum
-    );
-
     console.log(
-      `[Episodes] Successfully returning ${paginatedEpisodes.length} episodes`
+      `[Podcast Info] Successfully fetched info for: ${feedData.podcast.title}`
     );
 
     // return response
@@ -113,18 +95,12 @@ const handler: Handler = async (
       headers,
       body: JSON.stringify({
         success: true,
-        data: paginatedEpisodes, // direct array as expected by client
-        pagination: {
-          total: feedData.episodes.length,
-          limit: limitNum,
-          offset: offsetNum,
-          hasMore: offsetNum + limitNum < feedData.episodes.length,
-        },
+        data: feedData.podcast,
         timestamp: new Date().toISOString(),
       }),
     };
   } catch (error) {
-    console.error('[Episodes] Error:', error);
+    console.error('[Podcast Info] Error:', error);
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
@@ -134,11 +110,11 @@ const handler: Handler = async (
       errorMessage.includes('ENOTFOUND');
 
     return {
-      statusCode: isNetworkError ? 503 : 500, // service unavailable for network issues
+      statusCode: isNetworkError ? 503 : 500,
       headers,
       body: JSON.stringify({
         success: false,
-        error: 'Failed to fetch episodes',
+        error: 'Failed to fetch podcast information',
         details: errorMessage,
         timestamp: new Date().toISOString(),
       }),
@@ -146,5 +122,5 @@ const handler: Handler = async (
   }
 };
 
-// Export for Netlify Functions
+// export for netlify Functions
 exports.handler = handler;
