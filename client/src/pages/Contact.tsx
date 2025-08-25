@@ -78,8 +78,24 @@ const Contact: React.FC = () => {
             <div className="contact-method">
               <h3>Social Media</h3>
               <p>
-                Find us on Twitter @IGWPodcast and Bluesky
-                @itgetsweird.bsky.social
+                Find us on{' '}
+                <a
+                  href="https://x.com/IGWPodcast"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit us on Twitter (opens in new tab)"
+                >
+                  Twitter @IGWPodcast
+                </a>{' '}
+                and{' '}
+                <a
+                  href="https://bsky.app/profile/itgetsweird.bsky.social"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit us on Bluesky (opens in new tab)"
+                >
+                  Bluesky @itgetsweird.bsky.social
+                </a>
               </p>
             </div>
           </div>
