@@ -1,0 +1,54 @@
+[build]
+  base = "client"
+  command = "npm run build"
+  publish = "client/build"
+  functions = "netlify/functions"
+
+[build.environment]
+  REACT_APP_API_URL = "/.netlify/functions"
+  NODE_VERSION = "18"
+
+[dev]
+  command = "npm start"
+  port = 3000
+  publish = "client/build"
+  functions = "netlify/functions"
+  framework = "create-react-app"
+
+# Redirect API calls to functions
+[[redirects]]
+  from = "/api/rss/episodes"
+  to = "/.netlify/functions/episodes"
+  status = 200
+
+[[redirects]]
+  from = "/api/rss/podcast-info"
+  to = "/.netlify/functions/podcast-info"
+  status = 200
+
+# Catch-all redirect for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    X-XSS-Protection = "1; mode=block"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Accept"
+    Access-Control-Allow-Methods = "GET, OPTIONS"

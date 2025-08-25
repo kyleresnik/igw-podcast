@@ -1,0 +1,38 @@
+{
+  "name": "it-gets-weird-podcast",
+  "version": "1.0.0",
+  "description": "It Gets Weird Podcast Website - Full Stack with Netlify Functions",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify dev",
+    "dev:client": "cd client && npm start",
+    "build": "cd client && npm install && npm run build",
+    "build:functions": "tsc netlify/functions/*.ts --outDir netlify/functions --target es2020 --module commonjs --esModuleInterop --skipLibCheck",
+    "serve": "netlify dev",
+    "deploy": "netlify deploy",
+    "deploy:prod": "netlify deploy --prod",
+    "postinstall": "cd client && npm install"
+  },
+  "keywords": [
+    "podcast",
+    "react",
+    "netlify",
+    "rss",
+    "typescript"
+  ],
+  "author": "It Gets Weird Podcast",
+  "license": "MIT",
+  "devDependencies": {
+    "@netlify/functions": "^2.4.1",
+    "@types/node": "^20.0.0",
+    "@types/xml2js": "^0.4.11",
+    "typescript": "^5.2.0",
+    "netlify-cli": "^17.0.0"
+  },
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
