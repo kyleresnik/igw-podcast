@@ -53,6 +53,7 @@ button {
   overflow: visible;
   text-transform: none;
   -webkit-appearance: button;
+  appearance: button;
   border: none;
   background: none;
   cursor: pointer;
@@ -150,10 +151,12 @@ img {
   }
 }
 
-/* Dark mode media query (optional) */
+/* Dark mode media query (disabled - keeping site light) */
+/* 
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #1a1a1a;
     color: #e0e0e0;
   }
 }
+*/
