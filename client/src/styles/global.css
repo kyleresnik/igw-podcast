@@ -650,6 +650,48 @@ body.dark-mode .contact-method a:hover {
   line-height: 1.8;
 }
 
+/* Mysterious Carousel Section Styles */
+.mysterious-carousel-section {
+  margin: 3rem 0;
+  padding: 0 1rem;
+}
+
+/* Dark mode support for carousel */
+body.dark-mode .mysterious-carousel-section {
+  background: transparent;
+}
+
+/* Responsive adjustments for carousel */
+@media (max-width: 768px) {
+  .mysterious-carousel-section {
+    margin: 2rem 0;
+    padding: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mysterious-carousel-section {
+    margin: 1.5rem 0;
+  }
+}
+
+/* Additional hover effects for carousel images */
+.mysterious-carousel img:hover {
+  transform: scale(1.02);
+  filter: sepia(0.3) contrast(1.2) brightness(0.95);
+}
+
+/* Ensure carousel doesn't interfere with other sections */
+.mysterious-carousel-section + .featured-section {
+  margin-top: 4rem;
+}
+
+@media (max-width: 768px) {
+  .mysterious-carousel-section + .featured-section {
+    margin-top: 3rem;
+  }
+}
+
 .featured-section,
 .recent-episodes {
   margin-bottom: 4rem;

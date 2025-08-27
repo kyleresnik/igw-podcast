@@ -230,7 +230,109 @@ const parseExplicit = (value: string): boolean => {
   return normalized === 'true' || normalized === 'yes';
 };
 
-// CommonJS export for compatibility with Netlify Functions
+// check if a url is a valid image file
+const isImageUrl = (url: string): boolean => {
+  if (!url) return false;
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+  const lowerUrl = url.toLowerCase();
+  return imageExtensions.some((ext) => lowerUrl.includes(ext));
+};
+
+// enhanced episode image extraction function
+const extractEpisodeImage = (item: any, podcastImageUrl: string): string => {
+  // Check multiple possible locations for episode images
+  let episodeImage = '';
+
+  // 1. iTunes episode image
+  episodeImage = extractAttribute(item['itunes:image'], 'href');
+  if (episodeImage) return episodeImage;
+
+  // 2. Media content image
+  if (item['media:content']) {
+    episodeImage = extractAttribute(item['media:content'], 'url');
+    if (episodeImage && isImageUrl(episodeImage)) return episodeImage;
+  }
+
+  // 3. Media thumbnail
+  if (item['media:thumbnail']) {
+    episodeImage = extractAttribute(item['media:thumbnail'], 'url');
+    if (episodeImage) return episodeImage;
+  }
+
+  // 4. Description might contain image tags (less reliable)
+  const description = extractText(item.description);
+  const imgMatch = description.match(/<img[^>]+src="([^"]+)"/i);
+  if (imgMatch && imgMatch[1]) {
+    episodeImage = imgMatch[1];
+    if (isImageUrl(episodeImage)) return episodeImage;
+  }
+
+  // 5. Fall back to podcast image
+  return podcastImageUrl;
+};
+
+// process individual episode from RSS item
+const processEpisodeItem = (
+  item: any,
+  index: number,
+  podcast: PodcastInfo
+): Episode => {
+  const guid = extractText(item.guid);
+  const audioUrl = extractAudioUrl(item.enclosure);
+
+  if (!audioUrl) {
+    console.warn(`[RSS Parser] Episode ${index} missing audio URL`);
+  }
+
+  const episodeNumberText = extractText(item['itunes:episode']);
+  const seasonText = extractText(item['itunes:season']);
+  const keywordsText = extractText(item['itunes:keywords']);
+
+  const parsedEpisodeNumber = episodeNumberText
+    ? parseInt(episodeNumberText, 10)
+    : NaN;
+  const parsedSeason = seasonText ? parseInt(seasonText, 10) : NaN;
+
+  const episode: Episode = {
+    id: guid || `episode-${index}`,
+    title: extractText(item.title) || extractText(item['itunes:title']),
+    description: stripHtml(
+      extractText(item['content:encoded']) ||
+        extractText(item.description) ||
+        extractText(item['itunes:summary']) ||
+        extractText(item['itunes:subtitle'])
+    ),
+    audioUrl,
+    publishDate: new Date(extractText(item.pubDate) || Date.now()),
+    duration: parseDuration(extractText(item['itunes:duration'])),
+    imageUrl: extractEpisodeImage(item, podcast.imageUrl), // Use enhanced extraction
+    explicit: parseExplicit(extractText(item['itunes:explicit'])),
+    subtitle: stripHtml(extractText(item['itunes:subtitle'])),
+  };
+
+  // add optional properties only if valid
+  if (!isNaN(parsedEpisodeNumber) && parsedEpisodeNumber > 0) {
+    episode.episodeNumber = parsedEpisodeNumber;
+  }
+
+  if (!isNaN(parsedSeason) && parsedSeason > 0) {
+    episode.season = parsedSeason;
+  }
+
+  if (keywordsText) {
+    const parsedKeywords = keywordsText
+      .split(',')
+      .map((k) => k.trim())
+      .filter(Boolean);
+    if (parsedKeywords.length > 0) {
+      episode.keywords = parsedKeywords;
+    }
+  }
+
+  return episode;
+};
+
+// main RSS parsing function
 const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
   try {
     console.log(`[RSS Parser] Fetching feed from: ${rssUrl}`);
@@ -286,68 +388,17 @@ const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
 
     console.log(`[RSS Parser] Podcast: ${podcast.title} by ${podcast.author}`);
 
-    // extract episodes
+    // extract episodes using the shared processing function
     const items = channel.item || [];
     console.log(`[RSS Parser] Processing ${items.length} episodes`);
 
-    const episodes: Episode[] = items.map((item: any, index: number) => {
-      const guid = extractText(item.guid);
-      const audioUrl = extractAudioUrl(item.enclosure);
+    const episodes: Episode[] = items
+      .map((item: any, index: number) =>
+        processEpisodeItem(item, index, podcast)
+      )
+      .filter((ep: Episode) => ep.audioUrl && ep.title);
 
-      if (!audioUrl) {
-        console.warn(`[RSS Parser] Episode ${index} missing audio URL`);
-      }
-
-      const episodeNumberText = extractText(item['itunes:episode']);
-      const seasonText = extractText(item['itunes:season']);
-      const keywordsText = extractText(item['itunes:keywords']);
-
-      const parsedEpisodeNumber = episodeNumberText
-        ? parseInt(episodeNumberText, 10)
-        : NaN;
-      const parsedSeason = seasonText ? parseInt(seasonText, 10) : NaN;
-
-      const episode: Episode = {
-        id: guid || `episode-${index}`,
-        title: extractText(item.title) || extractText(item['itunes:title']),
-        description: stripHtml(
-          extractText(item['content:encoded']) ||
-            extractText(item.description) ||
-            extractText(item['itunes:summary']) ||
-            extractText(item['itunes:subtitle'])
-        ),
-        audioUrl,
-        publishDate: new Date(extractText(item.pubDate) || Date.now()),
-        duration: parseDuration(extractText(item['itunes:duration'])),
-        imageUrl:
-          extractAttribute(item['itunes:image'], 'href') || podcast.imageUrl,
-        explicit: parseExplicit(extractText(item['itunes:explicit'])),
-        subtitle: stripHtml(extractText(item['itunes:subtitle'])),
-      };
-
-      // add optional properties only if valid
-      if (!isNaN(parsedEpisodeNumber) && parsedEpisodeNumber > 0) {
-        episode.episodeNumber = parsedEpisodeNumber;
-      }
-
-      if (!isNaN(parsedSeason) && parsedSeason > 0) {
-        episode.season = parsedSeason;
-      }
-
-      if (keywordsText) {
-        const parsedKeywords = keywordsText
-          .split(',')
-          .map((k) => k.trim())
-          .filter(Boolean);
-        if (parsedKeywords.length > 0) {
-          episode.keywords = parsedKeywords;
-        }
-      }
-
-      return episode;
-    });
-
-    const validEpisodes = episodes.filter((ep) => ep.audioUrl && ep.title);
+    const validEpisodes = episodes;
     console.log(
       `[RSS Parser] ${validEpisodes.length} valid episodes processed`
     );
@@ -371,4 +422,5 @@ const parseRSSFeed = async (rssUrl: string): Promise<RSSResponse> => {
   }
 };
 
-module.exports = { parseRSSFeed };
+// CommonJS export for compatibility with Netlify Functions
+module.exports = { parseRSSFeed, processEpisodeItem, extractEpisodeImage };

@@ -2,6 +2,7 @@ import React from 'react';
 import { useRSSFeed } from '../hooks/useRSSFeed';
 import EpisodeCard from '../components/home/EpisodeCard';
 import FeaturedEpisode from '../components/home/FeaturedEpisode';
+import MysteriousCarousel from '../components/home/MysteriousCarousel';
 import Loading from '../components/common/Loading';
 
 const Home: React.FC = () => {
@@ -35,6 +36,14 @@ const Home: React.FC = () => {
   return (
     <div className="home-page">
       <section className="hero-section" aria-labelledby="hero-title">
+        {/* Add the Mysterious Carousel here */}
+        <section
+          className="mysterious-carousel-section"
+          aria-label="Mysterious phenomena gallery"
+        >
+          <MysteriousCarousel />
+        </section>
+
         <div className="hero-content">
           <h1 id="hero-title">Welcome to It Gets Weird</h1>
           <p className="hero-description">

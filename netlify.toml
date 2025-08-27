@@ -11,7 +11,7 @@
 
 [dev]
   command = "npm run dev:client"
-  port = 3000
+  port = 5000
   publish = "client/build"
   functions = "netlify/functions"
   framework = "create-react-app"
